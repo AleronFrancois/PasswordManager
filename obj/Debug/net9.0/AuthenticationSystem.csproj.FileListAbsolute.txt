@@ -1,0 +1,14 @@
+C:\Users\Aleron\Documents\AuthenticationSystem\bin\Debug\net9.0\AuthenticationSystem.exe
+C:\Users\Aleron\Documents\AuthenticationSystem\bin\Debug\net9.0\AuthenticationSystem.deps.json
+C:\Users\Aleron\Documents\AuthenticationSystem\bin\Debug\net9.0\AuthenticationSystem.runtimeconfig.json
+C:\Users\Aleron\Documents\AuthenticationSystem\bin\Debug\net9.0\AuthenticationSystem.dll
+C:\Users\Aleron\Documents\AuthenticationSystem\bin\Debug\net9.0\AuthenticationSystem.pdb
+C:\Users\Aleron\Documents\AuthenticationSystem\obj\Debug\net9.0\AuthenticationSystem.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Aleron\Documents\AuthenticationSystem\obj\Debug\net9.0\AuthenticationSystem.AssemblyInfoInputs.cache
+C:\Users\Aleron\Documents\AuthenticationSystem\obj\Debug\net9.0\AuthenticationSystem.AssemblyInfo.cs
+C:\Users\Aleron\Documents\AuthenticationSystem\obj\Debug\net9.0\AuthenticationSystem.csproj.CoreCompileInputs.cache
+C:\Users\Aleron\Documents\AuthenticationSystem\obj\Debug\net9.0\AuthenticationSystem.dll
+C:\Users\Aleron\Documents\AuthenticationSystem\obj\Debug\net9.0\refint\AuthenticationSystem.dll
+C:\Users\Aleron\Documents\AuthenticationSystem\obj\Debug\net9.0\AuthenticationSystem.pdb
+C:\Users\Aleron\Documents\AuthenticationSystem\obj\Debug\net9.0\AuthenticationSystem.genruntimeconfig.cache
+C:\Users\Aleron\Documents\AuthenticationSystem\obj\Debug\net9.0\ref\AuthenticationSystem.dll
