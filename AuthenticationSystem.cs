@@ -1,9 +1,12 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.Security.Cryptography;
+using System.Text;
+using System;
 
 
 public class AuthenticationSystem {
     public static List<User> users = new List<User>(); // List of user accounts
+    public static string path = "C:/Users/Aleron/Documents/GitHub/PasswordManager/Users.txt"; // Path to user database
+    private static int userIndex = 0; // User index number
 
 
     public static void Welcome() {
@@ -38,10 +41,10 @@ public class AuthenticationSystem {
 
 
     private static void Register() {
-        string? username;
-        string? password;
-        string? choice = "";
-        bool validCredentials = false;
+        string? username; // user's entered username
+        string? password; // User's entered password
+        string? choice = ""; // User's menu choice
+        bool validCredentials = false; // Flag for invalid or valid login attempt
 
         // Prompt user to enter account credentials
         while (validCredentials == false) {
@@ -74,8 +77,11 @@ public class AuthenticationSystem {
 
                 // If user credentials are valid, create and add new account to list of accounts
                 if (validCredentials == true) {
+                    password = ComputeSha256Hash(password);
                     User user = new User(username, password);
                     users.Add(user);
+                    userIndex++;
+                    File.AppendAllText(path, $"[{userIndex}]\nUsername: {user.Username}\nPassword: {user.Password}\n------------------------------\n");
                     Console.WriteLine("\nSuccessful registration");
                     Login(); // Load login form
                 }
@@ -88,17 +94,21 @@ public class AuthenticationSystem {
 
 
     private static void Login() {
-        string? username;
-        string? password;
-        string? choice = "";
-        bool loginSuccessful = false;
+        string? username; // User's entered username
+        string? password; // User's entered password
+        string? choice = ""; // User's menu choice
+        bool loginSuccessful = false; // Flag for invalid or valid login attempt
 
+        // Prompt user to enter login
         while (loginSuccessful == false) {
             Console.Write("\nEnter your username: ");
             username = Console.ReadLine();
             Console.Write("Enter your password: ");
             password = Console.ReadLine();
 
+            password = ComputeSha256Hash(password);
+
+            // Handle valid login credentials
             foreach (var user in users) {
                 if (username == user.Username && password == user.Password) {
                     Console.WriteLine("\nSuccessful login");
@@ -108,6 +118,7 @@ public class AuthenticationSystem {
                 }
             }
 
+            // Handle invalid login credentials
             if (loginSuccessful == false) {
                 Console.WriteLine("\nInvalid Credentials, please try again");
             }
@@ -115,7 +126,34 @@ public class AuthenticationSystem {
     }
 
 
+    private static void LoadUsers() {
+        // Preload all users from database
+        if (File.Exists(path)) {
+            string[] lines = File.ReadAllLines(path);
+            for (int i = 0; i < lines.Length; i += 4) {
+                string username = lines[i + 1].Split(": ")[1];
+                string password = lines[i + 2].Split(": ")[1];
+                users.Add(new User(username, password));
+            }
+        }
+    }
+
+
+    static string ComputeSha256Hash(string password) {
+        // Converts password to Sha256 hash
+        using (SHA256 sha256 = SHA256.Create()) {
+            byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+            StringBuilder builder = new StringBuilder();
+            foreach (byte b in bytes) {
+                builder.Append(b.ToString("x2"));
+            }
+            return builder.ToString();
+        }
+    }
+
+
     private static void Main(string[] args) {
+        LoadUsers(); // Preload users from database
         Welcome(); // Load welcome form
     }
 }
