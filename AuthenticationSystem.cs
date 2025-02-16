@@ -1,6 +1,8 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 using System;
+using System.IO;
+using System.ComponentModel.Design;
 
 
 public class AuthenticationSystem {
@@ -41,56 +43,60 @@ public class AuthenticationSystem {
 
 
     private static void Register() {
-        string? username; // user's entered username
-        string? password; // User's entered password
-        string? choice = ""; // User's menu choice
-        bool validCredentials = false; // Flag for invalid or valid login attempt
+    string? username; // user's entered username
+    string? password; // User's entered password
+    string? choice = ""; // User's menu choice
+    bool validCredentials = false; // Flag for invalid or valid login attempt
 
-        // Prompt user to enter account credentials
-        while (validCredentials == false) {
-            Console.Write("\nEnter a username: ");
-            username = Console.ReadLine();
-            Console.Write("Enter a password: ");
-            password = Console.ReadLine();
-            Console.Write("Please confirm if you would like to create this account (yes or no): ");
-            choice = Console.ReadLine();
+    // Prompt user to enter account credentials
+    while (validCredentials == false) {
+        Console.Write("\nEnter a username: ");
+        username = Console.ReadLine();
+        Console.Write("Enter a password: ");
+        password = Console.ReadLine();
+        Console.Write("Please confirm if you would like to create this account (yes or no): ");
+        choice = Console.ReadLine();
 
-            // Check for valid user credentials
-            if (choice.ToLower() == "yes") {
-                validCredentials = true; // Flag for valid or invalid credentials
+        // Check for valid user credentials
+        if (choice.ToLower() == "yes") {
+            validCredentials = true; // Flag for valid or invalid credentials
 
-                // Check if username already exists
-                foreach (var existingUsername in users) {
-                    if (username == existingUsername.Username) {
-                        Console.WriteLine("\nThis username already exists, please try again");
-                        validCredentials = false;
-                        break;
-                    }
-                }
-
-                // Ensure password length is appropriate 
-                if (validCredentials && (password.Length < 8 || password.Length > 20)) {
+            // Check if username already exists
+            foreach (var existingUsername in users) {
+                if (username == existingUsername.Username) {
+                    Console.WriteLine("\nThis username already exists, please try again");
                     validCredentials = false;
-                    if (password.Length < 8) Console.WriteLine("\nInvalid password, too short");
-                    if (password.Length > 20) Console.WriteLine("\nInvalid password, too long");
+                    break;
                 }
-
-                // If user credentials are valid, create and add new account to list of accounts
-                if (validCredentials == true) {
-                    password = ComputeSha256Hash(password);
-                    User user = new User(username, password);
-                    users.Add(user);
-                    userIndex++;
-                    File.AppendAllText(path, $"[{userIndex}]\nUsername: {user.Username}\nPassword: {user.Password}\n------------------------------\n");
-                    Console.WriteLine("\nSuccessful registration");
-                    Login(); // Load login form
-                }
-
-            } else {
-                Welcome(); // Load welcome form
             }
+
+            // Ensure password length is appropriate 
+            if (validCredentials && (password.Length < 8 || password.Length > 20)) {
+                validCredentials = false;
+                if (password.Length < 8) Console.WriteLine("\nInvalid password, too short");
+                if (password.Length > 20) Console.WriteLine("\nInvalid password, too long");
+            }
+
+            // If user credentials are valid, create and add new account to list of accounts
+            if (validCredentials == true) {
+                password = ComputeSha256Hash(password);
+                User user = new User(username, password);
+                users.Add(user);
+                userIndex++;
+                using (StreamWriter sw = new StreamWriter(path, true)) {
+                    sw.WriteLine($"[User {userIndex}]");
+                    sw.WriteLine($"Username: {user.Username}");
+                    sw.WriteLine($"Password: {user.Password}");
+                }
+                Console.WriteLine("\nSuccessful registration");
+                Login(); // Load login form
+            }
+
+        } else {
+            Welcome(); // Load welcome form
         }
     }
+}
 
 
     private static void Login() {
@@ -148,6 +154,35 @@ public class AuthenticationSystem {
                 builder.Append(b.ToString("x2"));
             }
             return builder.ToString();
+        }
+    }
+
+
+    public static void AddCredentials(User user) {
+        string? serviceName;
+        string? servicePassword;
+
+        Console.Write("Enter the service name: ");
+        serviceName = Console.ReadLine();
+        Console.Write("Enter the service password: ");
+        servicePassword = Console.ReadLine();
+
+        // Read all lines from the Users.txt file
+        string[] lines = File.ReadAllLines(path);
+        using (StreamWriter sw = new StreamWriter(path)) {
+            bool userFound = false;
+            foreach (string line in lines) {
+                if (line.Contains($"Username: {user.Username}")) {
+                    userFound = true;
+                }
+                if (userFound && line.StartsWith("Password: ")) {
+                    sw.WriteLine(line);
+                    sw.WriteLine($"Service: {serviceName}, Password: {servicePassword}");
+                    userFound = false;
+                } else {
+                    sw.WriteLine(line);
+                }
+            }
         }
     }
 

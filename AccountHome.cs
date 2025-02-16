@@ -5,7 +5,7 @@ public class AccountHome {
         while (choice != "3") {
             Console.WriteLine($"\nWelcome {user.Username}");
             Console.WriteLine("[1] View profile");
-            Console.WriteLine("[2] Change username");
+            Console.WriteLine("[2] Add credentials");
             Console.WriteLine("[3] Logout");
             Console.WriteLine("[4] Exit");
             Console.Write("Enter an option: ");
@@ -16,7 +16,7 @@ public class AccountHome {
                     Profile(user);
                     break;
                 case "2":
-                    
+                    AuthenticationSystem.AddCredentials(user);
                     break;
                 case "3":
                     AuthenticationSystem.Welcome(); 
